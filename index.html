@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HASHMARK — verified security tool drops</title>
+<meta name="description" content="Weekly drops of open-source security and DFIR tooling, each downloaded and hash-verified against the vendor's own published checksum. Vendor bytes, never repackaged.">
+<style>
+  :root{
+    --bg:#08090b; --panel:#0e1013; --panel-2:#12151a; --line:#1d2128; --line-2:#2a3038;
+    --ink:#e8eaed; --ink-2:#a2a9b4; --ink-3:#6d7480; --accent:#5eead4; --warn:#fbbf24; --bad:#f87171;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+  .wrap{max-width:940px;margin:0 auto;padding:0 24px}
+  header{border-bottom:1px solid var(--line);padding:18px 0;position:sticky;top:0;background:rgba(8,9,11,.86);backdrop-filter:blur(8px);z-index:5}
+  .brandrow{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{font-family:var(--mono);font-size:15px;letter-spacing:.14em;color:var(--ink)}
+  .brand b{color:var(--accent)}
+  .nav{display:flex;gap:18px;font-size:13px;color:var(--ink-3)}
+  .hero{padding:72px 0 40px}
+  h1{font-size:44px;line-height:1.05;letter-spacing:-.022em;margin:0 0 18px;font-weight:640}
+  h1 .dim{color:var(--ink-3)}
+  .lede{font-size:17px;color:var(--ink-2);max-width:660px;line-height:1.6;margin:0 0 26px}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .btn{display:inline-block;padding:11px 18px;border-radius:8px;border:1px solid var(--line-2);font-size:14px;color:var(--ink);background:var(--panel)}
+  .btn:hover{border-color:var(--accent);text-decoration:none}
+  .btn.primary{background:var(--accent);color:#04211d;border-color:var(--accent);font-weight:600}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .stats{display:flex;gap:28px;flex-wrap:wrap;margin:34px 0 0;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .stat{min-width:120px}
+  .stat b{display:block;font-family:var(--mono);font-size:22px;color:var(--ink)}
+  .stat span{font-size:12px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em}
+  section{padding:52px 0;border-top:1px solid var(--line)}
+  h2{font-size:13px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-3);font-weight:600;margin:0 0 22px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;color:var(--ink-3);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.08em;padding:0 12px 10px 0;border-bottom:1px solid var(--line)}
+  td{padding:13px 12px 13px 0;border-bottom:1px solid var(--line);vertical-align:top}
+  td.name{color:var(--ink);font-weight:560}
+  td.name small{display:block;color:var(--ink-3);font-weight:400;font-size:12px;margin-top:3px;max-width:340px;line-height:1.5}
+  code,.mono{font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+  .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-family:var(--mono);white-space:nowrap}
+  .b-ok{background:rgba(94,234,212,.12);color:var(--accent);border:1px solid rgba(94,234,212,.3)}
+  .b-rec{background:rgba(251,191,36,.1);color:var(--warn);border:1px solid rgba(251,191,36,.3)}
+  .b-bad{background:rgba(248,113,113,.12);color:var(--bad);border:1px solid rgba(248,113,113,.3)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .card h3{margin:0 0 8px;font-size:15px;font-weight:600}
+  .card p{margin:0;color:var(--ink-2);font-size:13.5px;line-height:1.6}
+  .num{font-family:var(--mono);color:var(--accent);font-size:12px;margin-bottom:10px;display:block}
+  .price{display:flex;align-items:baseline;gap:10px;margin:6px 0 14px}
+  .price b{font-size:32px;font-weight:620;letter-spacing:-.02em}
+  .price span{color:var(--ink-3);font-size:13px}
+  ul.clean{list-style:none;padding:0;margin:14px 0 0}
+  ul.clean li{padding:7px 0 7px 20px;position:relative;color:var(--ink-2);font-size:13.5px}
+  ul.clean li:before{content:"";position:absolute;left:0;top:14px;width:6px;height:6px;border-radius:2px;background:var(--accent)}
+  .note{font-size:12.5px;color:var(--ink-3);line-height:1.6;margin-top:14px}
+  footer{padding:34px 0 60px;border-top:1px solid var(--line);color:var(--ink-3);font-size:12.5px;line-height:1.7}
+  .loading{color:var(--ink-3);font-size:13px;font-family:var(--mono)}
+  @media(max-width:620px){h1{font-size:32px}.hero{padding:48px 0 28px}td.hide-s,th.hide-s{display:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap brandrow">
+  <div class="brand">HASH<b>MARK</b></div>
+  <nav class="nav">
+    <a href="#drops">Drops</a><a href="#how">Verification</a><a href="#corpus">Corpus</a>
+    <a href="https://github.com/savagedamage/hashmark">GitHub</a>
+  </nav>
+</div></header>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Vendor bytes.<br><span class="dim">Verified hashes.</span></h1>
+    <p class="lede">
+      Weekly drops of open-source security and DFIR tooling. Every release is downloaded, hashed with SHA-256,
+      and checked against the vendor's own published checksum before it is published here. Nothing is cracked,
+      patched, bundled or repackaged — the whole claim is that you can verify it yourself in ten seconds.
+    </p>
+    <div class="cta">
+      <a class="btn primary" href="#corpus">Get the verified corpus</a>
+      <a class="btn" href="#drops">See the live drops</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="s-tools">—</b><span>tools tracked</span></div>
+      <div class="stat"><b id="s-ver">—</b><span>vendor-confirmed</span></div>
+      <div class="stat"><b id="s-gen">—</b><span>corpus built</span></div>
+      <div class="stat"><b>SHA-256</b><span>every artefact</span></div>
+    </div>
+  </div>
+</div>
+
+<section id="drops"><div class="wrap">
+  <h2>Live drops — verified against the vendor's published checksum</h2>
+  <table>
+    <thead><tr>
+      <th>Tool</th><th class="hide-s">Release</th><th class="hide-s">Published</th>
+      <th class="hide-s">Size</th><th>SHA-256</th><th>Integrity</th>
+    </tr></thead>
+    <tbody id="rows"><tr><td colspan="6" class="loading">loading corpus…</td></tr></tbody>
+  </table>
+  <p class="note">
+    <b>verified-against-vendor</b> means the digest we computed matched the checksum the upstream project
+    published for that asset. <b>recorded</b> means the upstream project publishes no checksum file, so we
+    record the hash of the bytes we fetched without a third-party confirmation — stated plainly rather than
+    dressed up. Every row links to the upstream release so you never have to trust this page.
+  </p>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <h2>How a drop is verified</h2>
+  <div class="grid">
+    <div class="card"><span class="num">01</span><h3>Resolve</h3><p>Pull the latest release for the project straight from the source API — no mirrors, no third-party download pages.</p></div>
+    <div class="card"><span class="num">02</span><h3>Hash</h3><p>Download the release asset and compute SHA-256 over the exact bytes, recording the size alongside it.</p></div>
+    <div class="card"><span class="num">03</span><h3>Cross-check</h3><p>If the vendor publishes a checksum file, compare ours to theirs and publish a hard verdict: confirmed, or mismatch.</p></div>
+    <div class="card"><span class="num">04</span><h3>Publish + record</h3><p>Render the drop, archive it as raw markdown, and write the record into the machine-readable corpus with its provenance.</p></div>
+  </div>
+  <p class="note">The pipeline is one deterministic script and it is public. Re-run it and you should get the same digests for the same release tags.</p>
+</div></section>
+
+<section id="corpus"><div class="wrap">
+  <h2>The verified corpus</h2>
+  <div class="grid">
+    <div class="card" style="grid-column:span 2">
+      <h3>Machine-readable, provenance-carrying tool corpus</h3>
+      <div class="price"><b>$19</b><span>one-off · JSON + JSON-Schema + markdown drops</span></div>
+      <p>Every tracked tool as a record you can validate and pipe: repository, latest tag, publish date, asset
+      name and size, SHA-256, the vendor's own checksum when it exists, the integrity verdict, and what is
+      inside the archive. Built to be dropped into a pipeline, a lockfile, or an audit trail — not to be read
+      once and forgotten.</p>
+      <ul class="clean">
+        <li><code>hashmark-corpus.json</code> — every record, with the exact generator and build date</li>
+        <li><code>schema.json</code> — JSON Schema so you can validate it in CI</li>
+        <li>Raw markdown drop for each tool, ready to archive alongside your evidence</li>
+        <li>Updates as long as we run the pipeline — rebuilds are free after purchase</li>
+      </ul>
+      <div class="cta" style="margin-top:20px">
+        <a class="btn primary" href="https://github.com/savagedamage/hashmark/issues/new?title=corpus-request&amp;body=Tool%20or%20team%20context%3A%0APreferred%20delivery%20(JSON%20%2F%20schema%20%2F%20both)%3A%0A">Request access</a>
+        <a class="btn" href="https://github.com/savagedamage/hashmark/blob/main/bundle/schema.json">Read the schema first</a>
+      </div>
+      <p class="note">Access is granted manually per request while checkout is being wired — a request costs
+      nothing and is answered with the corpus and a payment route. Crypto settlement (TRC-20), no card data
+      ever touches this project.</p>
+    </div>
+    <div class="card">
+      <h3>Free tier</h3>
+      <p>Every drop is published free, in full, with its hash — the archive is the marketing. What you pay for
+      is the machine-readable corpus and the provenance records that make it auditable.</p>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Why this exists</h2>
+  <p class="lede" style="font-size:15.5px">
+    We spent a day dissecting a ~80,000-subscriber Telegram network that trades social handles, cracked
+    software and modded chat clients. Two things were measurable. News posts on its 29,600-subscriber channel
+    reached <b style="color:var(--ink)">426 views — a 1.4% view rate</b>. Utility and file posts on a
+    <b style="color:var(--ink)">657-subscriber</b> channel reached <b style="color:var(--ink)">2,290</b>.
+    The only thing in that network that travels is a tool, and the only thing that compounds is trust.
+    HASHMARK is the compliant rebuild: the mechanic that worked, none of the parts that get platforms and
+    operators deleted.
+  </p>
+</div></section>
+
+<footer><div class="wrap">
+  HASHMARK — vendor releases only, hashes published, sources linked. No repackaging, no cracked or patched
+  binaries, no harvested handles, no purchased subscribers. · <a href="https://github.com/savagedamage/hashmark">github.com/savagedamage/hashmark</a>
+</div></footer>
+
+<script>
+fetch('./data/tools.json', {cache:'no-store'}).then(r=>r.json()).then(d=>{
+  const t=(d.tools||[]).filter(x=>x.status==='ok');
+  document.getElementById('s-tools').textContent=t.length;
+  document.getElementById('s-ver').textContent=(d.verified_against_vendor||0);
+  document.getElementById('s-gen').textContent=(d.generated||'—');
+  const cls=c=>c==='verified-against-vendor'?'b-ok':(c==='MISMATCH'?'b-bad':'b-rec');
+  const lbl=c=>c==='verified-against-vendor'?'vendor-confirmed':(c==='MISMATCH'?'MISMATCH':'hash recorded');
+  document.getElementById('rows').innerHTML=t.map(x=>`
+    <tr>
+      <td class="name"><a href="${x.release_url}">${x.name}</a><small>${x.why||''}</small></td>
+      <td class="hide-s"><code>${x.tag||''}</code></td>
+      <td class="hide-s"><code>${(x.published||'').slice(0,10)}</code></td>
+      <td class="hide-s"><code>${((x.asset_bytes||0)/1048576).toFixed(1)} MB</code></td>
+      <td><code title="${x.computed_sha256}">${(x.computed_sha256||'').slice(0,16)}…</code></td>
+      <td><span class="badge ${cls(x.integrity_check)}">${lbl(x.integrity_check)}</span></td>
+    </tr>`).join('');
+}).catch(e=>{document.getElementById('rows').innerHTML='<tr><td colspan="6" class="loading">corpus unavailable: '+e+'</td></tr>';});
+</script>
+</body>
+</html>

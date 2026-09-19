@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/savagedamage/hashmark/main/bundle/schema.json",
+  "title": "HASHMARK verified tool corpus",
+  "type": "object",
+  "required": ["generated", "pipeline", "tools"],
+  "properties": {
+    "generated": {"type": "string", "description": "ISO date the corpus was built"},
+    "pipeline": {"type": "string", "description": "exact generator used, for reproducibility"},
+    "verified_against_vendor": {"type": "integer", "description": "records whose digest matched the vendor's published checksum"},
+    "hash_recorded_only": {"type": "integer", "description": "records where the vendor publishes no checksum; hash recorded, not third-party confirmed"},
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["repo", "name", "tag", "computed_sha256", "integrity_check"],
+        "properties": {
+          "repo": {"type": "string", "pattern": "^[^/]+/[^/]+$"},
+          "name": {"type": "string"},
+          "why": {"type": "string"},
+          "tag": {"type": "string"},
+          "published": {"type": "string"},
+          "release_url": {"type": "string", "format": "uri"},
+          "asset": {"type": "string"},
+          "asset_url": {"type": "string", "format": "uri"},
+          "asset_bytes": {"type": "integer"},
+          "downloaded_bytes": {"type": "integer"},
+          "computed_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "vendor_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "integrity_check": {"enum": ["verified-against-vendor", "recorded", "MISMATCH", "no-matching-asset"]},
+          "contents": {"type": "array", "items": {"type": "string"}},
+          "status": {"type": "string"}
+        }
+      }
+    },
+    "failures": {"type": "array", "items": {"type": "object"}}
+  }
+}
