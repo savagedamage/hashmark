@@ -37,7 +37,8 @@ def main(argv):
     derived = {}
     for e in t.get("events", []):
         k = {"drop-published": "drops_published", "corpus-request": "corpus_requests",
-             "digest-drift": "drift_events", "payment": "payments"}.get(e.get("kind"))
+             "digest-drift": "drift_events", "digest-drift-verified": "drift_events",
+             "payment": "payments"}.get(e.get("kind"))
         if k:
             derived[k] = derived.get(k, 0) + 1
     for k, v in derived.items():

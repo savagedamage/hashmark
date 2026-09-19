@@ -37,9 +37,12 @@ from a far smaller list.
 
 **Digests changed at an unchanged release tag.** Trivy `v0.74.0`, Grype `v0.119.0` and Syft `v1.52.0`
 produced different SHA-256 digests on two runs minutes apart while the tag stayed the same — upstream
-re-uploads assets under a live tag. Recorded in `tracker/tracker.json` and `data/digest-history.jsonl` rather
-than silently overwritten. This is the whole argument for the product in one observation: **a digest without a
-date and a re-check is not provenance.**
+re-uploads assets under a live tag. Re-checked independently afterwards: the current bytes match the current
+record and are *not* the earlier byte stream, so this is a real change in the published artefact and not a
+transient read error. Scope of the claim is exactly **"the bytes changed under an unchanged tag"** — it says
+nothing about intent or malice, and a rebuilt binary is a boring explanation. Recorded in
+`tracker/tracker.json` and `data/digest-history.jsonl` rather than silently overwritten. This is the whole
+argument for the product in one observation: **a digest without a date and a re-check is not provenance.**
 
 ## Layout
 

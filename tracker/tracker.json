@@ -17,6 +17,18 @@
    "kind": "tracker-recomputed",
    "detail": "stats derived from event log",
    "amount": null
+  },
+  {
+   "ts": "2026-09-19T23:44:51+00:00",
+   "kind": "digest-drift-verified",
+   "detail": "independent re-fetch of trivy v0.74.0 and grype v0.119.0: current bytes match the current record and are NOT the run-1 byte stream (trivy cf1e32ec8d4d8823 -> 2ae6fe3ee734b7fd, grype 361952c0d9ead70b -> 3fa2dc4b924621ab). Bytes changed under an unchanged tag; scope of claim is 'bytes changed', not attributing intent",
+   "amount": null
+  },
+  {
+   "ts": "2026-09-19T23:44:57+00:00",
+   "kind": "tracker-recomputed",
+   "detail": "drift_events now counts both observed and independently-verified drift",
+   "amount": null
   }
  ],
  "state": {
@@ -74,7 +86,7 @@
   "drops_published": 1,
   "tracked": 7,
   "checks": 1,
-  "drift_events": 1,
+  "drift_events": 2,
   "last_run": "2026-09-19T23:41:18+00:00"
  }
 }
