@@ -16,6 +16,31 @@ reach is the utility post, not the reposted outrage. Monetisation on top of comm
 ~$1.90 per 1,000 subscribers per month; selling an actual artefact to a self-selected audience is worth more,
 from a far smaller list.
 
+## Live
+
+| Surface | URL |
+|---|---|
+| Funnel site | https://savagedamage.github.io/hashmark/ |
+| Repo (public, archive of every drop) | https://github.com/savagedamage/hashmark |
+| Live corpus JSON | https://savagedamage.github.io/hashmark/data/tools.json |
+| Corpus requests (the conversion event) | repo → Issues → "corpus-request" |
+
+## Verification tiers published per tool
+
+| Tier | Meaning | Current count |
+|---|---|---|
+| `verified-against-vendor-signature` | vendor's detached GPG signature checked against their published key | 1 (Velociraptor) |
+| `verified-against-vendor` | digest matched the vendor's published checksum file | 3 (Trivy, Grype, Syft) |
+| `recorded` | vendor publishes neither checksum nor signature — the hash of the bytes we fetched, stated plainly | 3 (Chainsaw, Hayabusa, YARA-X) |
+
+## Finding worth keeping (from two consecutive runs)
+
+**Digests changed at an unchanged release tag.** Trivy `v0.74.0`, Grype `v0.119.0` and Syft `v1.52.0`
+produced different SHA-256 digests on two runs minutes apart while the tag stayed the same — upstream
+re-uploads assets under a live tag. Recorded in `tracker/tracker.json` and `data/digest-history.jsonl` rather
+than silently overwritten. This is the whole argument for the product in one observation: **a digest without a
+date and a re-check is not provenance.**
+
 ## Layout
 
 | Path | Purpose |
