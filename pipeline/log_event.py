@@ -18,6 +18,7 @@ def main(argv):
             t = json.load(fh)
     except Exception:
         t = {"events": [], "state": {}, "stats": {}}
+    os.makedirs(os.path.dirname(TRACKER), exist_ok=True)
     t.setdefault("events", []).append({
         "ts": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
         "kind": kind, "detail": detail, "amount": amount,

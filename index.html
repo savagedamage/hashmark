@@ -177,8 +177,8 @@ fetch('./data/tools.json', {cache:'no-store'}).then(r=>r.json()).then(d=>{
   document.getElementById('s-tools').textContent=t.length;
   document.getElementById('s-ver').textContent=(d.verified_against_vendor||0);
   document.getElementById('s-gen').textContent=(d.generated||'—');
-  const cls=c=>c==='verified-against-vendor'?'b-ok':(c==='MISMATCH'?'b-bad':'b-rec');
-  const lbl=c=>c==='verified-against-vendor'?'vendor-confirmed':(c==='MISMATCH'?'MISMATCH':'hash recorded');
+  const cls=c=>{if(c==='MISMATCH'||c==='SIGNATURE-INVALID')return 'b-bad';if(c&&c.indexOf('verified-against-vendor')===0)return 'b-ok';return 'b-rec';};
+  const lbl=c=>c==='verified-against-vendor-signature'?'signed + hash':(c==='verified-against-vendor'?'vendor-confirmed':(c==='MISMATCH'?'MISMATCH':'hash recorded'));
   document.getElementById('rows').innerHTML=t.map(x=>`
     <tr>
       <td class="name"><a href="${x.release_url}">${x.name}</a><small>${x.why||''}</small></td>

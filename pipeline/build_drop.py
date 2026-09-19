@@ -69,6 +69,67 @@ def stream_digest(url: str, cap: int = 600 * 1024 * 1024):
     return h.hexdigest(), total
 
 
+def stream_to_file(url: str, path: str, cap: int = 600 * 1024 * 1024):
+    """Stream a remote asset to disk while hashing it. Returns (hexdigest, bytes)."""
+    import hashlib
+    h, total = hashlib.sha256(), 0
+    req = urllib.request.Request(url, headers=UA)
+    with urllib.request.urlopen(req, timeout=900) as r, open(path, "wb") as out:
+        while True:
+            chunk = r.read(1 << 20)
+            if not chunk:
+                break
+            total += len(chunk)
+            if total > cap:
+                raise RuntimeError(f"asset exceeds cap ({cap} bytes)")
+            h.update(chunk)
+            out.write(chunk)
+    return h.hexdigest(), total
+
+
+GPG_HOME = os.path.join(ROOT, ".gnupg")
+SIGNERS = {
+    "Velocidex/velociraptor": "0572F28B4EF19A043F4CBBE0B22A7FB19CB6CFA1",
+}
+
+
+def import_signer(fpr: str) -> bool:
+    """Make sure the vendor's signing key is in the project keyring."""
+    import subprocess
+    os.makedirs(GPG_HOME, mode=0o700, exist_ok=True)
+    have = subprocess.run(["gpg", "--homedir", GPG_HOME, "--list-keys", fpr],
+                          capture_output=True, text=True)
+    if have.returncode == 0:
+        return True
+    for server in ("hkps://keys.openpgp.org", "hkps://keyserver.ubuntu.com"):
+        got = subprocess.run(["gpg", "--homedir", GPG_HOME, "--keyserver", server,
+                              "--recv-keys", fpr], capture_output=True, text=True, timeout=120)
+        if got.returncode == 0:
+            return True
+    return False
+
+
+def verify_signature(asset_path: str, sig_url: str, fpr: str):
+    """Vendor-signed releases are the strongest claim we can make. Returns a status string."""
+    import subprocess, tempfile
+    if not import_signer(fpr):
+        return "signature-key-unavailable"
+    with tempfile.NamedTemporaryFile(suffix=".sig", delete=False) as sf:
+        sf.write(fetch(sig_url, limit=64 * 1024))
+        sig_path = sf.name
+    try:
+        r = subprocess.run(["gpg", "--homedir", GPG_HOME, "--status-fd", "1", "--verify", sig_path, asset_path],
+                           capture_output=True, text=True, timeout=120)
+        out = r.stdout + r.stderr
+        if "GOODSIG" in out and fpr[-16:].upper() in out.upper().replace(" ", ""):
+            return "verified-against-vendor-signature"
+        if "GOODSIG" in out:
+            return "signature-valid-other-key"
+        return "SIGNATURE-INVALID"
+    finally:
+        os.unlink(sig_path)
+
+
 def fetch(url: str, limit: int = 80 * 1024 * 1024) -> bytes:
     req = urllib.request.Request(url, headers=UA)
     with urllib.request.urlopen(req, timeout=180) as r:
@@ -106,38 +167,60 @@ def collect(tool: dict) -> dict:
     rec["published"] = rel["published_at"]
     rec["release_url"] = rel["html_url"]
     assets = rel.get("assets", [])
-    target = next((a for a in assets if tool["pick"].lower() in a["name"].lower()), None)
-    sums_asset = next((a for a in assets if a["name"].lower().endswith((".sha256", "checksums.txt", ".txt", ".sig"))), None)
+    skip = (".sig", ".asc", ".msi", ".deb", ".rpm", ".exe", ".json")
+    cands = [a for a in assets
+             if tool["pick"].lower() in a["name"].lower() and not a["name"].lower().endswith(skip)]
+    target = min(cands, key=lambda a: len(a["name"])) if cands else None
+    sums_asset = next((a for a in assets
+                       if a["name"].lower().endswith((".sha256", ".sha256sum", "checksums.txt"))), None)
+    sig_asset = next((a for a in assets
+                      if target and a["name"].lower() == (target["name"] + ".sig").lower()), None)
     if target is None:
         rec["status"] = "no-matching-asset"
         return rec
     rec["asset"] = target["name"]
     rec["asset_url"] = target["browser_download_url"]
     rec["asset_bytes"] = target["size"]
-    rec["computed_sha256"], rec["downloaded_bytes"] = stream_digest(target["browser_download_url"])
-    rec["integrity_check"] = "recorded"
+    import tempfile
+    tmp = tempfile.NamedTemporaryFile(prefix="hashmark-", delete=False)
+    tmp.close()
+    try:
+        rec["computed_sha256"], rec["downloaded_bytes"] = stream_to_file(target["browser_download_url"], tmp.name)
+        rec["integrity_check"] = "recorded"
 
-    if sums_asset is not None:
-        try:
-            sums = vendor_sums(fetch(sums_asset["browser_download_url"], limit=2 * 1024 * 1024).decode("utf-8", "replace"))
-            want = sums.get(target["name"]) or sums.get(os.path.basename(target["name"]))
-            if want:
-                rec["vendor_sha256"] = want
-                rec["integrity_check"] = "verified-against-vendor" if want == rec["computed_sha256"] else "MISMATCH"
-        except Exception as e:  # checksum file unavailable/unparseable — record honestly
-            rec["sums_note"] = f"vendor checksum file not usable: {type(e).__name__}"
+        # tier 1 — the vendor's own cryptographic signature
+        if sig_asset is not None and tool["repo"] in SIGNERS:
+            rec["signature_asset"] = sig_asset["name"]
+            rec["integrity_check"] = verify_signature(tmp.name, sig_asset["browser_download_url"], SIGNERS[tool["repo"]])
 
-    # artefact inventory: what is inside the archive (files travel better than claims)
-    if rec.get("downloaded_bytes", 0) <= 60 * 1024 * 1024:
+        # tier 2 — the vendor's published checksum file
+        if sums_asset is not None and not rec["integrity_check"].startswith("verified-against-vendor-signature"):
+            try:
+                sums = vendor_sums(fetch(sums_asset["browser_download_url"], limit=4 * 1024 * 1024).decode("utf-8", "replace"))
+                want = sums.get(target["name"]) or sums.get(os.path.basename(target["name"]))
+                if want:
+                    rec["vendor_sha256"] = want
+                    rec["integrity_check"] = ("verified-against-vendor" if want == rec["computed_sha256"]
+                                              else "MISMATCH")
+            except Exception as e:
+                rec["sums_note"] = f"vendor checksum file not usable: {type(e).__name__}"
+
+        # artefact inventory: what is actually inside the archive
+        if rec.get("downloaded_bytes", 0) <= 60 * 1024 * 1024:
+            try:
+                with open(tmp.name, "rb") as fh:
+                    blob = fh.read()
+                if rec["asset"].endswith(".zip"):
+                    rec["contents"] = zipfile.ZipFile(io.BytesIO(blob)).namelist()[:12]
+                elif rec["asset"].endswith((".tar.gz", ".tgz")):
+                    t = tarfile.open(fileobj=io.BytesIO(gzip.decompress(blob)), mode="r:")
+                    rec["contents"] = [m.name for m in t.getmembers()[:12]][:12]
+            except Exception:
+                pass
+    finally:
         try:
-            blob = fetch(target["browser_download_url"], limit=80 * 1024 * 1024)
-            if rec["asset"].endswith(".zip"):
-                z = zipfile.ZipFile(io.BytesIO(blob))
-                rec["contents"] = z.namelist()[:12]
-            elif rec["asset"].endswith((".tar.gz", ".tgz")):
-                t = tarfile.open(fileobj=io.BytesIO(gzip.decompress(blob)), mode="r:")
-                rec["contents"] = [m.name for m in t.getmembers()[:12]]
-        except Exception:
+            os.unlink(tmp.name)
+        except OSError:
             pass
     rec["status"] = "ok"
     return rec
@@ -159,7 +242,11 @@ def render(rec: dict) -> str:
         "```",
         "",
         f"**Integrity** — {rec.get('integrity_check','?')}"
-        + (f" (matched the vendor's published `{os.path.basename(rec.get('sums_url') or 'checksum file')}`)" if rec.get("integrity_check") == "verified-against-vendor" else ""),
+        + (" — the vendor's detached GPG signature verified against their published signing key"
+           if rec.get("integrity_check") == "verified-against-vendor-signature" else
+           " — matched the vendor's published checksum file"
+           if rec.get("integrity_check") == "verified-against-vendor" else
+           " — no vendor checksum or signature published for this asset; the digest above is the vendor's bytes as fetched"),
         "",
         "**Verify it yourself before you run it**",
         "```",
@@ -194,7 +281,9 @@ def main():
     manifest = {
         "generated": stamp,
         "pipeline": "hashmark/build_drop.py",
-        "verified_against_vendor": sum(1 for r in records if r.get("integrity_check") == "verified-against-vendor"),
+        "signature_verified": sum(1 for r in records if r.get("integrity_check") == "verified-against-vendor-signature"),
+        "verified_against_vendor": sum(1 for r in records if r.get("integrity_check") in
+                                       ("verified-against-vendor", "verified-against-vendor-signature")),
         "hash_recorded_only": sum(1 for r in records if r.get("integrity_check") == "recorded"),
         "tools": records,
         "failures": failures,

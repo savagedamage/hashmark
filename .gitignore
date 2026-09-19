@@ -1,0 +1,9 @@
+# verification keyring — local only, never committed
+.gnupg/
+# scratch
+*.tmp
+__pycache__/
+*.pyc
+# large downloaded assets never land in git; only digests do
+*.tar.gz
+*.zip
