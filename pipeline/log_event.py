@@ -31,6 +31,17 @@ def main(argv):
         s["revenue"] = round(s.get("revenue", 0) + (amount or 0), 2)
     if kind == "drop-published":
         s["drops_published"] = s.get("drops_published", 0) + 1
+    if kind == "digest-drift":
+        s["drift_events"] = s.get("drift_events", 0) + 1
+    # counters must always be derivable from the event log, so recompute rather than trust the counter
+    derived = {}
+    for e in t.get("events", []):
+        k = {"drop-published": "drops_published", "corpus-request": "corpus_requests",
+             "digest-drift": "drift_events", "payment": "payments"}.get(e.get("kind"))
+        if k:
+            derived[k] = derived.get(k, 0) + 1
+    for k, v in derived.items():
+        s[k] = v
     with open(TRACKER, "w") as fh:
         json.dump(t, fh, indent=1)
     print(f"logged {kind}: {detail}")
