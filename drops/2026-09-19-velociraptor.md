@@ -11,7 +11,7 @@
 6c4c23c466d892788ff56ddcd3a31f844e4c0d797ade454c5e2625eb9e427077
 ```
 
-**Integrity** — recorded
+**Integrity** — verified-against-vendor-signature — the vendor's detached GPG signature verified against their published signing key
 
 **Verify it yourself before you run it**
 ```

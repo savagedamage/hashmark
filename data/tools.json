@@ -1,8 +1,9 @@
 {
  "generated": "2026-09-19",
  "pipeline": "hashmark/build_drop.py",
- "verified_against_vendor": 3,
- "hash_recorded_only": 4,
+ "signature_verified": 1,
+ "verified_against_vendor": 4,
+ "hash_recorded_only": 3,
  "tools": [
   {
    "repo": "WithSecureLabs/chainsaw",
@@ -81,13 +82,23 @@
    "tag": "v0.74.0",
    "published": "2026-08-14T11:29:11Z",
    "release_url": "https://github.com/aquasecurity/trivy/releases/tag/v0.74.0",
-   "asset": "trivy_0.74.0_Linux-64bit.deb",
-   "asset_url": "https://github.com/aquasecurity/trivy/releases/download/v0.74.0/trivy_0.74.0_Linux-64bit.deb",
-   "asset_bytes": 50410148,
-   "computed_sha256": "cf1e32ec8d4d8823e023096a28cadb14f5b5123ce03f201fb633c5b76aa712dd",
-   "downloaded_bytes": 50410148,
+   "asset": "trivy_0.74.0_Linux-64bit.tar.gz",
+   "asset_url": "https://github.com/aquasecurity/trivy/releases/download/v0.74.0/trivy_0.74.0_Linux-64bit.tar.gz",
+   "asset_bytes": 50419107,
+   "computed_sha256": "2ae6fe3ee734b7fdf11335663e18c75ea12dccc76062f09f164a3b0f8be4371a",
+   "downloaded_bytes": 50419107,
    "integrity_check": "verified-against-vendor",
-   "vendor_sha256": "cf1e32ec8d4d8823e023096a28cadb14f5b5123ce03f201fb633c5b76aa712dd",
+   "vendor_sha256": "2ae6fe3ee734b7fdf11335663e18c75ea12dccc76062f09f164a3b0f8be4371a",
+   "contents": [
+    "LICENSE",
+    "README.md",
+    "contrib/asff.tpl",
+    "contrib/gitlab-codequality.tpl",
+    "contrib/gitlab.tpl",
+    "contrib/html.tpl",
+    "contrib/junit.tpl",
+    "trivy"
+   ],
    "status": "ok"
   },
   {
@@ -97,13 +108,19 @@
    "tag": "v0.119.0",
    "published": "2026-09-17T16:45:23Z",
    "release_url": "https://github.com/anchore/grype/releases/tag/v0.119.0",
-   "asset": "grype_0.119.0_linux_amd64.deb",
-   "asset_url": "https://github.com/anchore/grype/releases/download/v0.119.0/grype_0.119.0_linux_amd64.deb",
-   "asset_bytes": 30476968,
-   "computed_sha256": "361952c0d9ead70b09d9305835811ea06e038e59a08d99b4891a368c6aa22dde",
-   "downloaded_bytes": 30476968,
+   "asset": "grype_0.119.0_linux_amd64.tar.gz",
+   "asset_url": "https://github.com/anchore/grype/releases/download/v0.119.0/grype_0.119.0_linux_amd64.tar.gz",
+   "asset_bytes": 30482169,
+   "computed_sha256": "3fa2dc4b924621ab65404cf08d0b8438d896d80ab949c9d5a4ca283c36004c9b",
+   "downloaded_bytes": 30482169,
    "integrity_check": "verified-against-vendor",
-   "vendor_sha256": "361952c0d9ead70b09d9305835811ea06e038e59a08d99b4891a368c6aa22dde",
+   "vendor_sha256": "3fa2dc4b924621ab65404cf08d0b8438d896d80ab949c9d5a4ca283c36004c9b",
+   "contents": [
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md",
+    "grype"
+   ],
    "status": "ok"
   },
   {
@@ -118,7 +135,8 @@
    "asset_bytes": 85616152,
    "computed_sha256": "6c4c23c466d892788ff56ddcd3a31f844e4c0d797ade454c5e2625eb9e427077",
    "downloaded_bytes": 85616152,
-   "integrity_check": "recorded",
+   "integrity_check": "verified-against-vendor-signature",
+   "signature_asset": "velociraptor-v0.77.2-linux-amd64.sig",
    "status": "ok"
   },
   {
@@ -128,13 +146,13 @@
    "tag": "v1.52.0",
    "published": "2026-09-17T14:38:17Z",
    "release_url": "https://github.com/anchore/syft/releases/tag/v1.52.0",
-   "asset": "syft_1.52.0_linux_amd64.deb",
-   "asset_url": "https://github.com/anchore/syft/releases/download/v1.52.0/syft_1.52.0_linux_amd64.deb",
-   "asset_bytes": 29281882,
-   "computed_sha256": "c8e13cd04f78b5cf90a70b2e45d2a4b7ec9aa0aa129d3001cd5d488103351b7f",
-   "downloaded_bytes": 29281882,
+   "asset": "syft_1.52.0_linux_amd64.sbom",
+   "asset_url": "https://github.com/anchore/syft/releases/download/v1.52.0/syft_1.52.0_linux_amd64.sbom",
+   "asset_bytes": 279264,
+   "computed_sha256": "ad9650592aec53f318295b2531120426b9edd83db797037bc10924278d40ae91",
+   "downloaded_bytes": 279264,
    "integrity_check": "verified-against-vendor",
-   "vendor_sha256": "c8e13cd04f78b5cf90a70b2e45d2a4b7ec9aa0aa129d3001cd5d488103351b7f",
+   "vendor_sha256": "ad9650592aec53f318295b2531120426b9edd83db797037bc10924278d40ae91",
    "status": "ok"
   }
  ],

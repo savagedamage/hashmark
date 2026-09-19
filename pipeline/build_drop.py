@@ -263,6 +263,17 @@ def render(rec: dict) -> str:
 
 def main():
     records, failures = [], []
+    # previous run's digests, so a changed digest for an unchanged tag is recorded as a finding
+    previous = {}
+    if os.path.exists(os.path.join(OUT["data"], "tools.json")):
+        try:
+            with open(os.path.join(OUT["data"], "tools.json")) as fh:
+                for r in json.load(fh).get("tools", []):
+                    if r.get("status") == "ok":
+                        previous[r["repo"]] = (r.get("tag"), r.get("computed_sha256"))
+        except Exception:
+            previous = {}
+
     for tool in TOOLS:
         try:
             rec = collect(tool)
@@ -273,6 +284,33 @@ def main():
             print(f"[!!] {tool['repo']}: {type(e).__name__}: {e}", file=sys.stderr)
 
     stamp = __import__("datetime").date.today().isoformat()
+    drift = []
+    with open(os.path.join(OUT["data"], "digest-history.jsonl"), "a") as hist:
+        for rec in records:
+            if rec.get("status") != "ok":
+                continue
+            hist.write(json.dumps({"date": stamp, "repo": rec["repo"], "tag": rec["tag"],
+                                   "asset": rec.get("asset"), "digest": rec.get("computed_sha256"),
+                                   "integrity": rec.get("integrity_check")}) + "\n")
+            prev_tag, prev_digest = previous.get(rec["repo"], (None, None))
+            if prev_tag == rec["tag"] and prev_digest and prev_digest != rec.get("computed_sha256"):
+                drift.append({"repo": rec["repo"], "tag": rec["tag"], "was": prev_digest,
+                              "now": rec["computed_sha256"]})
+    if drift:
+        print("\nDIGEST DRIFT at unchanged tag (recorded, not silently overwritten):")
+        for d in drift:
+            print(f"  {d['repo']} {d['tag']}: {d['was'][:16]}… -> {d['now'][:16]}…")
+        try:
+            tp = os.path.join(ROOT, "tracker", "tracker.json")
+            t = json.load(open(tp)) if os.path.exists(tp) else {"events": [], "state": {}, "stats": {}}
+            for d in drift:
+                t.setdefault("events", []).append({"ts": stamp, "kind": "digest-drift", **d})
+            t.setdefault("stats", {})["drift_events"] = t["stats"].get("drift_events", 0) + len(drift)
+            os.makedirs(os.path.dirname(tp), exist_ok=True)
+            json.dump(t, open(tp, "w"), indent=1)
+        except Exception:
+            pass
+
     for rec in records:
         if rec.get("status") == "ok":
             with open(os.path.join(OUT["drops"], f"{stamp}-{rec['name'].lower().replace('-','')}.md"), "w") as fh:

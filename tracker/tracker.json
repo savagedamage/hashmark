@@ -1,0 +1,20 @@
+{
+ "events": [
+  {
+   "ts": "2026-09-19T23:38:27+00:00",
+   "kind": "digest-drift",
+   "detail": "observed between two consecutive runs at unchanged tags (short digests): trivy v0.74.0 cf1e32ec8d4d8823->2ae6fe3ee734b7fd, grype v0.119.0 361952c0d9ead70b->3fa2dc4b924621ab, syft v1.52.0 c8e13cd04f78b5cf->ad9650592aec53f3 \u2014 assets re-uploaded under the same tag",
+   "amount": null
+  },
+  {
+   "ts": "2026-09-19T23:38:27+00:00",
+   "kind": "drop-published",
+   "detail": "7-tool corpus published: 1 signature-verified, 3 vendor-checksum-verified, 3 hash-recorded",
+   "amount": null
+  }
+ ],
+ "state": {},
+ "stats": {
+  "drops_published": 1
+ }
+}
