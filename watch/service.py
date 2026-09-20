@@ -207,6 +207,7 @@ def run(reverify=False, dry=False):
                  (datetime.datetime.fromisoformat(now()) - datetime.datetime.fromisoformat(last_reverify)).days >= 7)
         if not moved and not (reverify and stale):
             con.execute("UPDATE targets SET last_check=? WHERE id=?", (now(), tid))
+            con.commit()   # without this, last_check is lost whenever an unchanged target is the last one visited
             print(f"[same]  {repo} {info['tag']}")
             continue
         info = inspect(repo, pick, download=True)
