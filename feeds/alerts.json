@@ -1,0 +1,27 @@
+{
+ "generated": "2026-09-20T00:27:43+00:00",
+ "count": 3,
+ "alerts": [
+  {
+   "ts": "2026-09-19T23:00:00+00:00",
+   "kind": "drift",
+   "subject": "drift: anchore/syft v1.52.0",
+   "repo": "anchore/syft",
+   "title": "Syft"
+  },
+  {
+   "ts": "2026-09-19T23:00:00+00:00",
+   "kind": "drift",
+   "subject": "drift: anchore/grype v0.119.0",
+   "repo": "anchore/grype",
+   "title": "Grype"
+  },
+  {
+   "ts": "2026-09-19T23:00:00+00:00",
+   "kind": "drift",
+   "subject": "drift: aquasecurity/trivy v0.74.0",
+   "repo": "aquasecurity/trivy",
+   "title": "Trivy"
+  }
+ ]
+}

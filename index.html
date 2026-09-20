@@ -67,7 +67,7 @@
 <header><div class="wrap brandrow">
   <div class="brand">HASH<b>MARK</b></div>
   <nav class="nav">
-    <a href="#drops">Drops</a><a href="#how">Verification</a><a href="#corpus">Corpus</a>
+    <a href="#drops">Drops</a><a href="#watch">Watch</a><a href="#how">Verification</a><a href="#corpus">Corpus</a>
     <a href="https://github.com/savagedamage/hashmark">GitHub</a>
   </nav>
 </div></header>
@@ -108,6 +108,44 @@
     record the hash of the bytes we fetched without a third-party confirmation — stated plainly rather than
     dressed up. Every row links to the upstream release so you never have to trust this page.
   </p>
+</div></section>
+
+<section id="watch"><div class="wrap">
+  <h2>HASHMARK WATCH — the alert nobody else sends</h2>
+  <div class="grid">
+    <div class="card" style="grid-column:span 2">
+      <h3>New release · digest changed · verification failed</h3>
+      <p>Everyone alerts on new releases. We also alert when <b>the bytes change under an unchanged tag</b> —
+      observed three times in a single afternoon on trivy, grype and syft, each confirmed by independent
+      re-fetch. A tag, a changelog and an RSS feed all look identical while the artefact underneath is
+      replaced. Nothing in a normal toolchain notices; that is the whole reason this exists.</p>
+      <ul class="clean">
+        <li>Verification tier on every alert — vendor signature, vendor checksum, or honest hash record</li>
+        <li>Push to Telegram, or webhook straight into CI</li>
+        <li>Free tier: the public feed, in JSON and RSS, no account</li>
+        <li>Team tier: your own watchlist — internal tools, mirrors, your own images and SBOMs</li>
+      </ul>
+      <div class="cta" style="margin-top:18px">
+        <a class="btn" href="./feeds/alerts.json">Live feed (JSON)</a>
+        <a class="btn" href="./feeds/alerts.xml">Live feed (RSS)</a>
+        <a class="btn primary" href="https://github.com/savagedamage/hashmark/issues/new?title=watch-subscribe&amp;body=Tool%20or%20team%20context%3A%0AWhat%20you%20need%20watched%20(repos%20%2F%20images%20%2F%20SBOMs)%3A%0ADelivery%20(Telegram%20%2F%20webhook)%3A%0A">Subscribe</a>
+      </div>
+      <p class="note">Subscribe opens an issue while checkout is wired — a request is answered with the
+      watchlist set up and a payment route. No card data, ever; crypto or Telegram Stars only.</p>
+    </div>
+    <div class="card">
+      <h3>WATCH — $8/mo</h3>
+      <div class="price"><b>$8</b><span>per month · or 500 Stars</span></div>
+      <p>Push alerts for the tracked tool set: new release, digest drift, verification failure — with the hash
+      and the verification tier attached.</p>
+    </div>
+    <div class="card">
+      <h3>TEAM — $49/mo</h3>
+      <div class="price"><b>$49</b><span>per month</span></div>
+      <p>A private watchlist of your own images, SBOMs and internal tools, delivered by webhook into CI, with a
+      verification record you can hand to an auditor.</p>
+    </div>
+  </div>
 </div></section>
 
 <section id="how"><div class="wrap">

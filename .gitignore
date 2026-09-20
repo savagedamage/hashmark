@@ -1,5 +1,8 @@
 # verification keyring — local only, never committed
 .gnupg/
+# operational state: holds subscriber addresses, stays on this host (never publish PII)
+watch/watch.db
+*.db-journal
 # scratch
 *.tmp
 __pycache__/

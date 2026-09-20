@@ -1,0 +1,27 @@
+{
+  "_comment": "Rails are adapters. An empty trc20 address or telegram.enabled=false disables that rail without breaking anything else — the service keeps verifying, keeps writing the public feed, and keeps recording every delivery attempt and failure.",
+  "rails": {
+    "trc20": {
+      "address": "",
+      "price_usd": 8,
+      "price_days": 30,
+      "note": "Paste a TRC-20 receiving address to switch this rail on. Never invent an address; an invoice to the wrong address is worse than no invoice."
+    },
+    "stars": {
+      "price_stars": 500,
+      "price_days": 30,
+      "note": "500 Stars ≈ $6.50 at the desktop payout rate (~$0.013/Star). 1,000-Star minimum withdrawal, 21-day hold, cash-out via Fragment needs the bot owner's Telegram + TON wallet."
+    }
+  },
+  "telegram": {
+    "bot_token_env": "TELEGRAM_BOT_TOKEN",
+    "enabled": false,
+    "note": "Delivery adapter, not a new bot: point it at a bot token whose owner has agreed to carry this product. A bot cannot create a channel; it can post to one where it is an admin."
+  },
+  "webhook": {"enabled": true},
+  "tiers": {
+    "free": "public feed only (feeds/alerts.json + alerts.xml)",
+    "watch": "$8/mo or 500 Stars: push alerts for the tracked tools (release / drift / integrity failure)",
+    "team": "$49/mo: your own watchlist (private images, SBOMs, internal tools) + webhook into CI"
+  }
+}
