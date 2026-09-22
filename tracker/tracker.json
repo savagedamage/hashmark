@@ -36,57 +36,57 @@
    "tag": "v2.16.5",
    "published": "2026-08-25T19:14:50Z",
    "name": "Chainsaw",
-   "last_checked": "2026-09-20T07:00:48+00:00",
+   "last_checked": "2026-09-22T04:00:43+00:00",
    "last_digest": "7a7289d15f085af9bce39dfa3052adf0b4c78cab0dbfb91c2dbe38322909ce02"
   },
   "Yamato-Security/hayabusa": {
    "tag": "v4.1.0",
    "published": "2026-09-12T23:35:35Z",
    "name": "Hayabusa",
-   "last_checked": "2026-09-20T07:00:48+00:00",
+   "last_checked": "2026-09-22T04:00:43+00:00",
    "last_digest": "2348a889c1d5dc07880f170e131c61ef68af1c1e1d3cebd5bed8af2d17d42bed"
   },
   "VirusTotal/yara-x": {
    "tag": "v1.20.0",
    "published": "2026-08-24T12:32:25Z",
    "name": "YARA-X",
-   "last_checked": "2026-09-20T07:00:48+00:00",
+   "last_checked": "2026-09-22T04:00:43+00:00",
    "last_digest": "cabb8df46492fff59c51261302c71ed9cb2cef393d3f0ca560801a34a8e24cbe"
   },
   "aquasecurity/trivy": {
    "tag": "v0.74.0",
    "published": "2026-08-14T11:29:11Z",
    "name": "Trivy",
-   "last_checked": "2026-09-20T07:00:48+00:00",
+   "last_checked": "2026-09-22T04:00:43+00:00",
    "last_digest": "2ae6fe3ee734b7fdf11335663e18c75ea12dccc76062f09f164a3b0f8be4371a"
   },
   "anchore/grype": {
    "tag": "v0.119.0",
    "published": "2026-09-17T16:45:23Z",
    "name": "Grype",
-   "last_checked": "2026-09-20T07:00:48+00:00",
+   "last_checked": "2026-09-22T04:00:43+00:00",
    "last_digest": "3fa2dc4b924621ab65404cf08d0b8438d896d80ab949c9d5a4ca283c36004c9b"
   },
   "Velocidex/velociraptor": {
    "tag": "v0.77.2",
    "published": "2026-08-10T11:18:05Z",
    "name": "Velociraptor",
-   "last_checked": "2026-09-20T07:00:48+00:00",
+   "last_checked": "2026-09-22T04:00:43+00:00",
    "last_digest": "6c4c23c466d892788ff56ddcd3a31f844e4c0d797ade454c5e2625eb9e427077"
   },
   "anchore/syft": {
    "tag": "v1.52.0",
    "published": "2026-09-17T14:38:17Z",
    "name": "Syft",
-   "last_checked": "2026-09-20T07:00:48+00:00",
+   "last_checked": "2026-09-22T04:00:43+00:00",
    "last_digest": "ad9650592aec53f318295b2531120426b9edd83db797037bc10924278d40ae91"
   }
  },
  "stats": {
   "drops_published": 1,
   "tracked": 7,
-  "checks": 2,
+  "checks": 3,
   "drift_events": 2,
-  "last_run": "2026-09-20T07:00:48+00:00"
+  "last_run": "2026-09-22T04:00:43+00:00"
  }
 }
